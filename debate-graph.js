@@ -1,9 +1,6 @@
 /* TODO
-- get old graph working with Graph and renderGraph
-- clean up + commit
 - get switching to textarea + buttons when (double?)click
 - update graph text if text changes
-- find a markdown->html converter
 - render to html when blur (shouldn't have to re-layout because fixed size)
 */
 

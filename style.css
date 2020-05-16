@@ -1,7 +1,16 @@
 .myDiv {
   background-color: lightblue;
-  text-align: center;
+  /* text-align: center; */
   position: absolute;
+  overflow: auto;
+}
+.myText {
+  background-color: lightblue;
+  /* text-align: center; */
+  position: absolute;
+  resize: none;
+  border: none;
+  outline: none;
 }
 svg {
   position: fixed;
