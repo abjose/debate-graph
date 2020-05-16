@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link href="style.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+  <defs>
+    <!-- replace this with arrowhead from inkscape? -->
+    <marker id="arrowhead" viewBox="0 0 10 10" refX="3" refY="5"
+        markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" />
+    </marker>
+  </defs>
+  <g id="svg_arrows" fill="none" stroke="black" stroke-width="2" marker-end="url(#arrowhead)">
+  </g>
+</svg>
+
+<h2>debate graph</h2>
+
+<p id="demo">A Paragraph.</p>
+
+<button type="button" onclick="myFunction()">Try it</button>
+
+<script src="dagre.js"></script>
+<script src="graph.js"></script>
+<script src="debate-graph.js"></script>
+
+</body>
+</html>
