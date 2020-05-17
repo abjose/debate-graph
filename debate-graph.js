@@ -1,12 +1,18 @@
 /* TODO
-- get switching to textarea + buttons when (double?)click
-- update graph text if text changes
-- render to html when blur (shouldn't have to re-layout because fixed size)
+- CLEAN STUFF UP - so that not mixing calls to renderer and stuff
+- Make a controller so can keep some state for creating edges
+- turn renderer into a class
+- and renderer then takes both graph and controller? how does that work?
+- Also can just set what's being edited in there and have view update accordingly?
+- put action buttons into a dropdown next to an "add" button?
+- put all the flowchart in its own div - make sure arrows don't stick when scroll everything
 */
 
-function run() {
-  var debate_graph = new Graph();
+// TODO: don't be global
+var controller = new Controller();
+var debate_graph = new Graph();
 
+function run() {
   var id1 = debate_graph.addNode();
   var id2 = debate_graph.addNode();
   var id3 = debate_graph.addNode();

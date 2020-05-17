@@ -4,6 +4,15 @@
   position: absolute;
   overflow: auto;
 }
+.editingDiv {
+  /* background-color: lightblue; */
+  /* text-align: center; */
+  position: absolute;
+  /* overflow: auto; */
+}
+#graph_nodes {
+  overflow: auto;
+}
 .myText {
   background-color: lightblue;
   /* text-align: center; */

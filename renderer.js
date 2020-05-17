@@ -7,15 +7,20 @@ var div_height = 150
 
 
 function renderGraph(graph) {
+  // clear any existing nodes and edges
+  clearNodes();
+  clearEdges();
+
   var dagre_graph = layout(graph)
 
+  var graph_nodes_div = document.getElementById("graph_nodes");
   dagre_graph.nodes().forEach(function(v) {
     console.log("Node " + v + ": " + JSON.stringify(dagre_graph.node(v)));
     dagre_node = dagre_graph.node(v)
     x = dagre_node.x - div_width / 2 + "px"
     y = dagre_node.y - div_height / 2 + "px"
     node_div = makeNode(x, y, graph.nodes[v]);
-    document.body.appendChild(node_div);
+    graph_nodes_div.appendChild(node_div);
   });
 
   dagre_graph.edges().forEach(function(e) {
@@ -67,9 +72,6 @@ function makeNode(x, y, node) {
   return div;
 }
 
-function clearNodes() {
-}
-
 function drawLine(points) {
   var svg_arrows = document.getElementById("svg_arrows");
 
@@ -83,31 +85,79 @@ function drawLine(points) {
   svg_arrows.appendChild(arrow);
 }
 
-function clearLines(points) {
+function clearNodes() {
+  var graph_nodes = document.getElementById("graph_nodes");
+  while (graph_nodes.hasChildNodes()) {
+    graph_nodes.removeChild(graph_nodes.lastChild);
+  }
+}
+
+function clearEdges(points) {
   var svg_arrows = document.getElementById("svg_arrows");
-  // remove children
+  while (svg_arrows.hasChildNodes()) {
+    svg_arrows.removeChild(svg_arrows.lastChild);
+  }
 }
 
 function nodeClicked(node) {
   console.log('click!', node);
+
+  if (controller.edge_from_node_id != undefined &&
+      node.graph_id != controller.edge_from_node_id) {
+    console.log('add edge between', controller.edge_from_node_id, node.graph_id);
+    // ok, now need a way to trigger a re-render
+    debate_graph.addEdge(controller.edge_from_node_id, node.graph_id)
+    controller.edge_from_node_id = undefined
+    renderGraph(debate_graph)
+  }
+
+  var editing_div = document.createElement("div");
+  editing_div.classList.add("editingDiv");
+  editing_div.style.top = this.style.top;
+  editing_div.style.left = this.style.left;
+
+  var button_div = document.createElement("div");
+  editing_div.appendChild(button_div);
+
+  var connect_btn = document.createElement("button");
+  connect_btn.innerHTML = "connect"
+  connect_btn.onclick = connectNode.bind(this, node);
+  button_div.appendChild(connect_btn);
+
+  var btn2 = document.createElement("button");
+  btn2.innerHTML = "parent"
+  button_div.appendChild(btn2);
+
+  var btn3 = document.createElement("button");
+  btn3.innerHTML = "child"
+  button_div.appendChild(btn3);
+
+  var save_btn = document.createElement("button");
+  save_btn.innerHTML = "save"
+  button_div.appendChild(save_btn);
 
   var textarea = document.createElement("textarea");
   textarea.classList.add("myText");
   textarea.value = node.text
   textarea.style.width = div_width-4 + "px";  // WHY DIFFERENT SIZES???
   textarea.style.height = div_height-4 + "px";
-  // textarea.style.maxHeight = this.style.height;
-  textarea.style.top = this.style.top;
-  textarea.style.left = this.style.left;
-  this.replaceWith(textarea);
+  editing_div.appendChild(textarea)
+
+  this.replaceWith(editing_div);
   textarea.focus();
-  textarea.onblur = nodeBlurred.bind(textarea, node);
+
+  save_btn.onclick = saveNode.bind(textarea, node);
 }
 
-function nodeBlurred(node) {
-  console.log('blur!', node)
+function saveNode(node) {
+  console.log('save!', node, this.value)
   node.text = this.value;
 
-  node_div = makeNode(this.style.left, this.style.top, node)
-  this.replaceWith(node_div);
+  node_div = makeNode(this.parentNode.style.left, this.parentNode.style.top, node)
+  this.parentNode.replaceWith(node_div);
+}
+
+
+function connectNode(node) {
+  controller.edge_from_node_id = node.graph_id
 }
