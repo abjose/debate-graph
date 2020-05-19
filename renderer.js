@@ -5,7 +5,7 @@ var node_height = 165
 var div_width = 150
 var div_height = 150
 
-edit_options = ["cxn", "child", "parent"];
+edit_options = ["cxn", "child", "parent", "delete"];
 
 function renderGraph(graph) {
   // clear any existing nodes and edges
@@ -16,17 +16,19 @@ function renderGraph(graph) {
 
   var graph_nodes_div = document.getElementById("graph_nodes");
   dagre_graph.nodes().forEach(function(v) {
-    console.log("Node " + v + ": " + JSON.stringify(dagre_graph.node(v)));
-    dagre_node = dagre_graph.node(v)
-    x = dagre_node.x - div_width / 2 + "px"
-    y = dagre_node.y - div_height / 2 + "px"
-    node_div = makeNode(x, y, graph.nodes[v]);
-    graph_nodes_div.appendChild(node_div);
+    if (graph.nodes[v] != undefined) {  // TODO: remove me
+      console.log("Node " + v + ": " + JSON.stringify(dagre_graph.node(v)));
+      dagre_node = dagre_graph.node(v)
+      x = dagre_node.x - div_width / 2 + "px"
+      y = dagre_node.y - div_height / 2 + "px"
+      node_div = makeNode(x, y, graph.nodes[v]);
+      graph_nodes_div.appendChild(node_div);
+    }
   });
 
   dagre_graph.edges().forEach(function(e) {
     console.log("Edge " + e.v + " -> " + e.w + ": " + JSON.stringify(dagre_graph.edge(e)));
-    drawLine(dagre_graph.edge(e).points);
+    drawEdge(e.v, e.w, dagre_graph.edge(e).points);
   });
 }
 
@@ -45,7 +47,9 @@ function layout(graph) {
 
   for (const node_id of graph.nodes.keys()) {
     node = graph.nodes[node_id];
-    g.setNode(node_id, { width: node_width, height: node_height });
+    if (node != undefined) {  // TODO: get rid of me
+      g.setNode(node_id, { width: node_width, height: node_height });
+    }
   }
   for (const from_node_id of graph.edges.keys()) {
     successors = graph.edges[from_node_id];
@@ -73,7 +77,7 @@ function makeNode(x, y, node) {
   return div;
 }
 
-function drawLine(points) {
+function drawEdge(from_id, to_id, points) {
   var svg_arrows = document.getElementById("svg_arrows");
 
   points_string = ""
@@ -83,7 +87,17 @@ function drawLine(points) {
 
   var arrow = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
   arrow.setAttributeNS(null, "points", points_string)
+  arrow.from_node_id = from_id;
+  arrow.to_node_id = to_id;
+  arrow.onclick = edgeClicked.bind(arrow);
   svg_arrows.appendChild(arrow);
+}
+
+function edgeClicked() {
+  if (confirm("Remove this edge?")) {
+    controller.removeEdge(this.from_node_id, this.to_node_id);
+    renderGraph(debate_graph);
+  }
 }
 
 function clearNodes() {
@@ -118,9 +132,9 @@ function nodeClicked(node) {
   var button_div = document.createElement("div");
   editing_div.appendChild(button_div);
 
-  var add_btn = document.createElement("button");
-  add_btn.innerHTML = "add"
-  button_div.appendChild(add_btn);
+  var action_btn = document.createElement("button");
+  action_btn.innerHTML = "do";
+  button_div.appendChild(action_btn);
 
   var select = document.createElement("select");
   button_div.appendChild(select);
@@ -131,7 +145,7 @@ function nodeClicked(node) {
     select.add(option);
   }
 
-  add_btn.onclick = editNode.bind(select, node);
+  action_btn.onclick = editNode.bind(select, node);
 
   var save_btn = document.createElement("button");
   save_btn.innerHTML = "save"
@@ -158,6 +172,12 @@ function saveNode(node) {
   this.parentNode.replaceWith(node_div);
 }
 
+function removeNode(node) {
+  if (confirm("Remove this node?")) {
+    controller.removeNode(node);
+  }
+}
+
 function editNode(node) {
   dirty = false;
   switch (this.value) {
@@ -170,6 +190,10 @@ function editNode(node) {
     break;
   case edit_options[2]:  // add parent
     controller.addParent(node)
+    dirty = true;
+    break;
+  case edit_options[3]:  // delete
+    removeNode(node);
     dirty = true;
     break;
   default:

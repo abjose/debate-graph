@@ -24,7 +24,26 @@ class Graph {
     this.edges[from_node_id].add(to_node_id);
   }
 
+  removeNode(node_id) {
+    // hmm maybe node_id == idx was a bad idea
+    this.nodes[node_id] = undefined;
+    this.edges[node_id] = undefined;
+    for (var i = 0; i < this.edges.length; ++i) {
+      if (this.edges[i] != undefined) {
+        this.edges[i].delete(node_id);
+      }
+    }
+  }
+
+  removeEdge(from_id, to_id) {
+    if (this.edges[from_id] != undefined) {
+      this.edges[from_id].delete(to_id);
+    }
+  }
+
   serialize() {
     // TODO
+    // should ignore undefined nodes
+    // maybe should have actual ids
   }
 }

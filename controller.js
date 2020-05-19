@@ -25,4 +25,12 @@ class Controller {
     var parent_id = debate_graph.addNode();
     debate_graph.addEdge(parent_id, node.graph_id)
   }
+
+  removeNode(node) {
+    debate_graph.removeNode(Number(node.graph_id));
+  }
+
+  removeEdge(from_id, to_id) {
+    debate_graph.removeEdge(Number(from_id), Number(to_id));
+  }
 }
