@@ -16,14 +16,12 @@ function renderGraph(graph) {
 
   var graph_nodes_div = document.getElementById("graph_nodes");
   dagre_graph.nodes().forEach(function(v) {
-    if (graph.nodes[v] != undefined) {  // TODO: remove me
-      console.log("Node " + v + ": " + JSON.stringify(dagre_graph.node(v)));
-      dagre_node = dagre_graph.node(v)
-      x = dagre_node.x - div_width / 2 + "px"
-      y = dagre_node.y - div_height / 2 + "px"
-      node_div = makeNode(x, y, graph.nodes[v]);
-      graph_nodes_div.appendChild(node_div);
-    }
+    console.log("Node " + v + ": " + JSON.stringify(dagre_graph.node(v)));
+    dagre_node = dagre_graph.node(v)
+    x = dagre_node.x - div_width / 2 + "px"
+    y = dagre_node.y - div_height / 2 + "px"
+    node_div = makeNode(x, y, graph.getNode(v));
+    graph_nodes_div.appendChild(node_div);
   });
 
   dagre_graph.edges().forEach(function(e) {
@@ -46,13 +44,10 @@ function layout(graph) {
   g.setDefaultEdgeLabel(function() { return {}; });
 
   for (const node_id of graph.nodes.keys()) {
-    node = graph.nodes[node_id];
-    if (node != undefined) {  // TODO: get rid of me
-      g.setNode(node_id, { width: node_width, height: node_height });
-    }
+    g.setNode(node_id, { width: node_width, height: node_height });
   }
   for (const from_node_id of graph.edges.keys()) {
-    successors = graph.edges[from_node_id];
+    successors = graph.getSuccessors(from_node_id);
     if (successors != undefined) {
       for (const to_node_id of successors) {
         g.setEdge(from_node_id, to_node_id);
