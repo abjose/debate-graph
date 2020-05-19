@@ -5,6 +5,7 @@ var node_height = 165
 var div_width = 150
 var div_height = 150
 
+edit_options = ["cxn", "child", "parent"];
 
 function renderGraph(graph) {
   // clear any existing nodes and edges
@@ -99,15 +100,13 @@ function clearEdges(points) {
   }
 }
 
+// TODO: Move onClick part into controller but keep rendering things here? don't want to trigger a full rerender for this
 function nodeClicked(node) {
   console.log('click!', node);
 
   if (controller.edge_from_node_id != undefined &&
       node.graph_id != controller.edge_from_node_id) {
-    console.log('add edge between', controller.edge_from_node_id, node.graph_id);
-    // ok, now need a way to trigger a re-render
-    debate_graph.addEdge(controller.edge_from_node_id, node.graph_id)
-    controller.edge_from_node_id = undefined
+    controller.completeConnection(node);
     renderGraph(debate_graph)
   }
 
@@ -119,18 +118,20 @@ function nodeClicked(node) {
   var button_div = document.createElement("div");
   editing_div.appendChild(button_div);
 
-  var connect_btn = document.createElement("button");
-  connect_btn.innerHTML = "connect"
-  connect_btn.onclick = connectNode.bind(this, node);
-  button_div.appendChild(connect_btn);
+  var add_btn = document.createElement("button");
+  add_btn.innerHTML = "add"
+  button_div.appendChild(add_btn);
 
-  var btn2 = document.createElement("button");
-  btn2.innerHTML = "parent"
-  button_div.appendChild(btn2);
+  var select = document.createElement("select");
+  button_div.appendChild(select);
 
-  var btn3 = document.createElement("button");
-  btn3.innerHTML = "child"
-  button_div.appendChild(btn3);
+  for (const option_text of edit_options) {
+    let option = document.createElement("option");
+    option.text = option.value = option_text;
+    select.add(option);
+  }
+
+  add_btn.onclick = editNode.bind(select, node);
 
   var save_btn = document.createElement("button");
   save_btn.innerHTML = "save"
@@ -157,7 +158,26 @@ function saveNode(node) {
   this.parentNode.replaceWith(node_div);
 }
 
+function editNode(node) {
+  dirty = false;
+  switch (this.value) {
+  case edit_options[0]:  // connect
+    controller.initConnection(node);
+    break;
+  case edit_options[1]:  // add child
+    controller.addChild(node)
+    dirty = true;
+    break;
+  case edit_options[2]:  // add parent
+    controller.addParent(node)
+    dirty = true;
+    break;
+  default:
+    console.log("unhandled option:", this.value);
+    break;
+  }
 
-function connectNode(node) {
-  controller.edge_from_node_id = node.graph_id
+  if (dirty) {
+    renderGraph(debate_graph);
+  }
 }
