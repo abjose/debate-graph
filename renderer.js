@@ -86,6 +86,14 @@ function drawEdge(from_id, to_id, points) {
   arrow.to_node_id = to_id;
   arrow.onclick = edgeClicked.bind(arrow);
   svg_arrows.appendChild(arrow);
+
+  // Add a second larger line behind the first to make clicking easier
+  var arrow2 = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+  arrow2.setAttributeNS(null, "points", points_string)
+  arrow2.from_node_id = from_id;
+  arrow2.to_node_id = to_id;
+  arrow2.onclick = edgeClicked.bind(arrow2);
+  svg_arrows_background.appendChild(arrow2);
 }
 
 function edgeClicked() {
@@ -104,6 +112,10 @@ function clearNodes() {
 
 function clearEdges(points) {
   var svg_arrows = document.getElementById("svg_arrows");
+  while (svg_arrows.hasChildNodes()) {
+    svg_arrows.removeChild(svg_arrows.lastChild);
+  }
+  var svg_arrows = document.getElementById("svg_arrows_background");
   while (svg_arrows.hasChildNodes()) {
     svg_arrows.removeChild(svg_arrows.lastChild);
   }

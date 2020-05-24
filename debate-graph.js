@@ -1,5 +1,6 @@
 /* TODO
 - put all the flowchart in its own div - make sure arrows don't stick when scroll everything
+- figure out how to make arrowhead clickable
 - CLEAN STUFF UP - so that not mixing calls to renderer and stuff
   i think renderer should own state on if something is in editing mode, etc.
   so controller will update graph and renderer with stuff based on user actions
