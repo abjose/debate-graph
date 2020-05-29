@@ -14,12 +14,17 @@ function renderGraph(graph) {
 
   var dagre_graph = layout(graph)
 
+  // Resize svg so it all renders.
+  svg = document.getElementById("svg_base");
+  svg.style.width = dagre_graph.graph().width + "px";
+  svg.style.height = dagre_graph.graph().height + "px";
+
   var graph_nodes_div = document.getElementById("graph_nodes");
   dagre_graph.nodes().forEach(function(v) {
     console.log("Node " + v + ": " + JSON.stringify(dagre_graph.node(v)));
-    dagre_node = dagre_graph.node(v)
-    x = dagre_node.x - div_width / 2 + "px"
-    y = dagre_node.y - div_height / 2 + "px"
+    dagre_node = dagre_graph.node(v);
+    x = dagre_node.x - div_width / 2 + "px";
+    y = dagre_node.y - div_height / 2 + "px";
     node_div = makeNode(x, y, graph.getNode(v));
     graph_nodes_div.appendChild(node_div);
   });
