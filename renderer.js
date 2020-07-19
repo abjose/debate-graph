@@ -65,7 +65,7 @@ function layout(graph) {
 }
 
 function makeNode(x, y, node) {
-  // TODO: set the graph_ids on the divs! so know what to connect w/ edges
+  // TODO: set the node_ids on the divs! so know what to connect w/ edges
   var div = document.createElement("div");
   div.classList.add("myDiv");
   div.style.width = div_width + "px";
@@ -131,7 +131,7 @@ function nodeClicked(node) {
   console.log('click!', node);
 
   if (controller.edge_from_node_id != undefined &&
-      node.graph_id != controller.edge_from_node_id) {
+      node.node_id != controller.edge_from_node_id) {
     controller.completeConnection(node);
     renderGraph(debate_graph)
   }

@@ -16,6 +16,13 @@ bugs
 - if execute "connect", then delete that node, still execute a connection on the next node you click but wrong
 */
 
+const Controller = require('./controller.js');
+const Graph = require('./graph.js');
+var mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost/mongoose_basics', function (err) {
+  run();
+});
+
 // TODO: don't be global
 var controller = new Controller();
 var debate_graph = new Graph();
@@ -48,7 +55,7 @@ function run() {
   debate_graph.addEdge(ida4, ida5);
   debate_graph.addEdge(ida5, ida6);
 
-  renderGraph(debate_graph)
+  renderGraph(debate_graph);
 }
 
-run()
+// run();
